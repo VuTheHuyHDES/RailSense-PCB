@@ -1,0 +1,11 @@
+# Common IDE and system files
+.DS_Store
+Thumbs.db
+*.bak
+*.tmp
+*.log
+*.PcbDoc.htm
+*.SchDoc.htm
+History/
+Project Outputs for*/
+__previews/

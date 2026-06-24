@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RailSense – Autonomous Rail Inspection System</title>
+  <meta name="description" content="PCB Design & Firmware for an autonomous NDT rail inspection vehicle. ESP32-based dual-board system with ESP-NOW P2P communication.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0e1a;
+      --bg-card: #111827;
+      --bg-card-hover: #1a2236;
+      --border: #1e293b;
+      --border-hover: #4ade80;
+      --green: #4ade80;
+      --green-dim: #22c55e;
+      --green-glow: rgba(74, 222, 128, 0.15);
+      --cyan: #22d3ee;
+      --yellow: #facc15;
+      --red: #f87171;
+      --text: #e2e8f0;
+      --text-dim: #94a3b8;
+      --text-muted: #64748b;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg-primary);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 24px;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 600px 400px at 50% 30%, rgba(74,222,128,0.08), transparent),
+        radial-gradient(ellipse 400px 300px at 80% 70%, rgba(34,211,238,0.05), transparent);
+      pointer-events: none;
+    }
+
+    /* Grid pattern */
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(74,222,128,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(74,222,128,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(74,222,128,0.1);
+      border: 1px solid rgba(74,222,128,0.2);
+      border-radius: 100px;
+      padding: 8px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--green);
+      margin-bottom: 32px;
+      position: relative;
+      z-index: 1;
+      animation: fadeInDown 0.8s ease;
+    }
+
+    .badge .dot {
+      width: 8px; height: 8px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse-dot 2s infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(74,222,128,0.4); }
+      50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(74,222,128,0); }
+    }
+
+    .hero h1 {
+      font-size: clamp(42px, 7vw, 72px);
+      font-weight: 800;
+      letter-spacing: -2px;
+      line-height: 1.1;
+      position: relative;
+      z-index: 1;
+      animation: fadeInDown 0.8s ease 0.1s both;
+    }
+
+    .hero h1 .highlight {
+      background: linear-gradient(135deg, var(--green), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero .subtitle {
+      font-size: clamp(16px, 2.5vw, 20px);
+      color: var(--text-dim);
+      max-width: 700px;
+      margin: 24px auto 40px;
+      font-weight: 300;
+      position: relative;
+      z-index: 1;
+      animation: fadeInDown 0.8s ease 0.2s both;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+      animation: fadeInDown 0.8s ease 0.3s both;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--green);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 4px;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== SCROLL CTA ===== */
+    .scroll-cta {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      animation: bounce 2s infinite;
+    }
+
+    .scroll-cta .arrow {
+      width: 20px;
+      height: 20px;
+      border-right: 2px solid var(--text-muted);
+      border-bottom: 2px solid var(--text-muted);
+      transform: rotate(45deg);
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(10px); }
+    }
+
+    /* ===== SECTIONS ===== */
+    section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .section-header h2 {
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin-bottom: 12px;
+    }
+
+    .section-header p {
+      color: var(--text-dim);
+      font-size: 16px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .section-tag {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--green);
+      margin-bottom: 12px;
+    }
+
+    /* ===== PCB VIEWER ===== */
+    .pcb-viewers {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    .viewer-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.4s ease;
+    }
+
+    .viewer-card:hover {
+      border-color: var(--border-hover);
+      box-shadow: 0 0 40px var(--green-glow);
+    }
+
+    .viewer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 28px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .viewer-title {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .viewer-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--green-glow);
+      border: 1px solid rgba(74,222,128,0.2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .viewer-name {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .viewer-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .viewer-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(74,222,128,0.1);
+      border: 1px solid rgba(74,222,128,0.25);
+      color: var(--green);
+      padding: 8px 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .viewer-link:hover {
+      background: rgba(74,222,128,0.2);
+      border-color: var(--green);
+    }
+
+    .viewer-iframe-wrap {
+      position: relative;
+      width: 100%;
+      height: 550px;
+      background: #0d1117;
+    }
+
+    .viewer-iframe-wrap iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .viewer-iframe-wrap .fallback {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      color: var(--text-dim);
+      font-size: 14px;
+      background: var(--bg-card);
+      z-index: -1;
+    }
+
+    .fallback a {
+      color: var(--green);
+      text-decoration: underline;
+    }
+
+    /* ===== TECH SPECS ===== */
+    .specs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .spec-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      transition: all 0.3s ease;
+    }
+
+    .spec-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px var(--green-glow);
+    }
+
+    .spec-card .icon {
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+
+    .spec-card h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .spec-card p {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.7;
+    }
+
+    .spec-card .tech-tag {
+      display: inline-block;
+      background: rgba(74,222,128,0.1);
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 100px;
+      margin-top: 12px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ===== ARCHITECTURE ===== */
+    .arch-diagram {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px;
+      text-align: center;
+    }
+
+    .arch-flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+
+    .arch-node {
+      background: rgba(74,222,128,0.05);
+      border: 1.5px solid rgba(74,222,128,0.3);
+      border-radius: 12px;
+      padding: 20px 28px;
+      min-width: 180px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .arch-node:hover {
+      border-color: var(--green);
+      box-shadow: 0 0 20px var(--green-glow);
+    }
+
+    .arch-node.cyan {
+      border-color: rgba(34,211,238,0.3);
+      background: rgba(34,211,238,0.05);
+    }
+
+    .arch-node.cyan:hover {
+      border-color: var(--cyan);
+      box-shadow: 0 0 20px rgba(34,211,238,0.15);
+    }
+
+    .arch-node .node-icon { font-size: 24px; margin-bottom: 8px; }
+    .arch-node .node-name { font-size: 15px; font-weight: 600; }
+    .arch-node .node-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .arch-arrow {
+      color: var(--green);
+      font-size: 28px;
+      opacity: 0.5;
+      animation: arrowPulse 1.5s infinite;
+    }
+
+    @keyframes arrowPulse {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.8; }
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 24px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    footer .author {
+      font-size: 15px;
+      color: var(--text-dim);
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    footer a {
+      color: var(--green);
+      text-decoration: none;
+    }
+
+    footer a:hover { text-decoration: underline; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .hero-stats { gap: 24px; }
+      .viewer-header { flex-direction: column; gap: 12px; align-items: flex-start; }
+      .viewer-iframe-wrap { height: 400px; }
+      .arch-flow { flex-direction: column; }
+      .arch-arrow { transform: rotate(90deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== HERO ===== -->
+  <div class="hero">
+    <div class="badge">
+      <span class="dot"></span>
+      Graduation Project 2026
+    </div>
+    <h1>
+      <span class="highlight">RailSense</span><br>
+      PCB & Firmware
+    </h1>
+    <p class="subtitle">
+      Custom-designed power electronics & embedded firmware for an autonomous NDT rail inspection vehicle.
+      Dual ESP32 system with real-time P2P control via ESP-NOW.
+    </p>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-value">2</div>
+        <div class="stat-label">PCB Boards</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">IPC-2221</div>
+        <div class="stat-label">Design Standard</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">ESP32</div>
+        <div class="stat-label">Dual-Core MCU</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">&lt;5ms</div>
+        <div class="stat-label">Latency (ESP-NOW)</div>
+      </div>
+    </div>
+    <div class="scroll-cta">
+      <span>Explore PCB</span>
+      <div class="arrow"></div>
+    </div>
+  </div>
+
+  <!-- ===== PCB VIEWERS ===== -->
+  <section id="pcb">
+    <div class="section-header">
+      <span class="section-tag">Hardware Design</span>
+      <h2>Interactive PCB Viewer</h2>
+      <p>Click and drag to rotate 3D view. Designed in Altium Designer, manufactured with industrial-grade standards.</p>
+    </div>
+
+    <div class="pcb-viewers">
+      <!-- VCU Board -->
+      <div class="viewer-card">
+        <div class="viewer-header">
+          <div class="viewer-title">
+            <div class="viewer-icon">🚂</div>
+            <div>
+              <div class="viewer-name">RailSense VCU</div>
+              <div class="viewer-desc">Vehicle Control Unit — Main board on the inspection cart</div>
+            </div>
+          </div>
+          <a class="viewer-link" href="https://365.altium.com/files/D97F3CD4-1BBE-41F5-9CD4-5D6C0D82514E?variant=[No+Variations]" target="_blank" rel="noopener">
+            Open in Altium 365 ↗
+          </a>
+        </div>
+        <div class="viewer-iframe-wrap">
+          <iframe 
+            src="https://365.altium.com/files/D97F3CD4-1BBE-41F5-9CD4-5D6C0D82514E?variant=[No+Variations]"
+            loading="lazy"
+            allow="fullscreen"
+            title="RailSense VCU - Altium 365 Viewer">
+          </iframe>
+          <div class="fallback">
+            <p>⏳ Loading Altium 365 Viewer...</p>
+            <p>If it doesn't load, <a href="https://365.altium.com/files/D97F3CD4-1BBE-41F5-9CD4-5D6C0D82514E?variant=[No+Variations]" target="_blank">open directly →</a></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- RCU Board -->
+      <div class="viewer-card">
+        <div class="viewer-header">
+          <div class="viewer-title">
+            <div class="viewer-icon">🎮</div>
+            <div>
+              <div class="viewer-name">RailSense RCU</div>
+              <div class="viewer-desc">Remote Control Unit — Handheld controller with OLED display</div>
+            </div>
+          </div>
+          <a class="viewer-link" href="https://365.altium.com/files/4F8EC39F-F583-4526-B163-FFBB24310D29" target="_blank" rel="noopener">
+            Open in Altium 365 ↗
+          </a>
+        </div>
+        <div class="viewer-iframe-wrap">
+          <iframe 
+            src="https://365.altium.com/files/4F8EC39F-F583-4526-B163-FFBB24310D29"
+            loading="lazy"
+            allow="fullscreen"
+            title="RailSense RCU - Altium 365 Viewer">
+          </iframe>
+          <div class="fallback">
+            <p>⏳ Loading Altium 365 Viewer...</p>
+            <p>If it doesn't load, <a href="https://365.altium.com/files/4F8EC39F-F583-4526-B163-FFBB24310D29" target="_blank">open directly →</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ARCHITECTURE ===== -->
+  <section>
+    <div class="section-header">
+      <span class="section-tag">System Architecture</span>
+      <h2>Communication Flow</h2>
+      <p>Peer-to-peer real-time control with no router dependency</p>
+    </div>
+
+    <div class="arch-diagram">
+      <div class="arch-flow">
+        <div class="arch-node cyan">
+          <div class="node-icon">🎮</div>
+          <div class="node-name">RCU (TX)</div>
+          <div class="node-sub">Remote Controller</div>
+        </div>
+        <div class="arch-arrow">⟶</div>
+        <div class="arch-node">
+          <div class="node-icon">📡</div>
+          <div class="node-name">ESP-NOW</div>
+          <div class="node-sub">P2P • &lt;5ms • 100m+</div>
+        </div>
+        <div class="arch-arrow">⟶</div>
+        <div class="arch-node cyan">
+          <div class="node-icon">🚂</div>
+          <div class="node-name">VCU (RX)</div>
+          <div class="node-sub">Vehicle Controller</div>
+        </div>
+        <div class="arch-arrow">⟶</div>
+        <div class="arch-node">
+          <div class="node-icon">⚙️</div>
+          <div class="node-name">Actuators</div>
+          <div class="node-sub">Motors • Pump • Vitme</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SPECS ===== -->
+  <section>
+    <div class="section-header">
+      <span class="section-tag">Technical Specifications</span>
+      <h2>Key Design Highlights</h2>
+    </div>
+
+    <div class="specs-grid">
+      <div class="spec-card">
+        <div class="icon">⚡</div>
+        <h3>Power Management</h3>
+        <p>24V Li-ion 6S3P battery. 1oz copper traces, 6.5mm power rails. Peak 11A with ΔT &lt; 10°C. Calculated via Saturn PCB Toolkit.</p>
+        <span class="tech-tag">IPC-2221</span>
+      </div>
+      <div class="spec-card">
+        <div class="icon">🛡️</div>
+        <h3>Signal Integrity</h3>
+        <p>Full ground plane on bottom layer. Via stitching around board edges. Complete isolation between power (motor) and signal (I2C/Encoder) zones.</p>
+        <span class="tech-tag">EMI/EMC</span>
+      </div>
+      <div class="spec-card">
+        <div class="icon">🔲</div>
+        <h3>Motor Control</h3>
+        <p>4× BTS7960B H-Bridge drivers. PCA9685 PWM expansion via I2C. Closed-loop PID speed control with hall encoders.</p>
+        <span class="tech-tag">BTS7960B × 4</span>
+      </div>
+      <div class="spec-card">
+        <div class="icon">📡</div>
+        <h3>Wireless Control</h3>
+        <p>ESP-NOW peer-to-peer on 802.11 PHY layer. No TCP/IP overhead. Delivery callback confirmation. Packet loss &lt; 1%.</p>
+        <span class="tech-tag">ESP-NOW P2P</span>
+      </div>
+      <div class="spec-card">
+        <div class="icon">🔊</div>
+        <h3>NDT Ultrasonic</h3>
+        <p>YUSHI 4MHz/20mm dual probes. Auto gel priming via 24VDC diaphragm pump. Self-locking lead screw probe deployment.</p>
+        <span class="tech-tag">4MHz UT</span>
+      </div>
+      <div class="spec-card">
+        <div class="icon">📷</div>
+        <h3>Computer Vision</h3>
+        <p>Dual front-facing cameras for continuous rail surface imaging. Laptop-based AI processing with anti-vibration mount.</p>
+        <span class="tech-tag">OpenCV</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <div class="author">Vũ Thế Huy — KTĐT&THCN 1, Khóa 62</div>
+    <p>Graduation Project: Nghiên cứu và chế tạo xe tự hành kiểm tra đường ray tàu hỏa</p>
+    <p style="margin-top: 8px;">
+      <a href="https://github.com/YOUR_USERNAME" target="_blank">GitHub</a> · 
+      <a href="mailto:your.email@gmail.com">Email</a> · 
+      <a href="https://linkedin.com/in/YOUR_PROFILE" target="_blank">LinkedIn</a>
+    </p>
+  </footer>
+
+</body>
+</html>
