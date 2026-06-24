@@ -27,6 +27,10 @@
       --text-muted: #64748b;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
@@ -165,10 +169,7 @@
 
     /* ===== SCROLL CTA ===== */
     .scroll-cta {
-      position: absolute;
-      bottom: 40px;
-      left: 50%;
-      transform: translateX(-50%);
+      margin-top: 60px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -178,6 +179,8 @@
       text-transform: uppercase;
       letter-spacing: 2px;
       animation: bounce 2s infinite;
+      text-decoration: none;
+      z-index: 10;
     }
 
     .scroll-cta .arrow {
@@ -189,8 +192,8 @@
     }
 
     @keyframes bounce {
-      0%, 100% { transform: translateX(-50%) translateY(0); }
-      50% { transform: translateX(-50%) translateY(10px); }
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(10px); }
     }
 
     /* ===== SECTIONS ===== */
@@ -548,10 +551,10 @@
         <div class="stat-label">Latency (ESP-NOW)</div>
       </div>
     </div>
-    <div class="scroll-cta">
+    <a href="#pcb" class="scroll-cta">
       <span>Explore PCB</span>
       <div class="arrow"></div>
-    </div>
+    </a>
   </div>
 
   <!-- ===== PCB VIEWERS ===== -->
