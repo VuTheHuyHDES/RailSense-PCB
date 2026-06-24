@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     :root {
       --bg-primary: #0a0e1a;
@@ -271,7 +272,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 20px;
+    }
+
+    .viewer-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke-width: 2px;
+      color: var(--green);
     }
 
     .viewer-name {
@@ -358,8 +365,16 @@
     }
 
     .spec-card .icon {
-      font-size: 28px;
       margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      color: var(--green);
+    }
+
+    .spec-card .icon svg {
+      width: 28px;
+      height: 28px;
+      stroke-width: 1.75px;
     }
 
     .spec-card h3 {
@@ -429,7 +444,23 @@
       box-shadow: 0 0 20px rgba(34,211,238,0.15);
     }
 
-    .arch-node .node-icon { font-size: 24px; margin-bottom: 8px; }
+    .arch-node .node-icon { 
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--green);
+    }
+
+    .arch-node .node-icon svg {
+      width: 24px;
+      height: 24px;
+      stroke-width: 2px;
+    }
+
+    .arch-node.cyan .node-icon {
+      color: var(--cyan);
+    }
     .arch-node .node-name { font-size: 15px; font-weight: 600; }
     .arch-node .node-sub {
       font-size: 12px;
@@ -536,7 +567,7 @@
       <div class="viewer-card">
         <div class="viewer-header">
           <div class="viewer-title">
-            <div class="viewer-icon">🚂</div>
+            <div class="viewer-icon"><i data-lucide="cpu"></i></div>
             <div>
               <div class="viewer-name">RailSense VCU</div>
               <div class="viewer-desc">Vehicle Control Unit — Main board on the inspection cart</div>
@@ -559,7 +590,7 @@
       <div class="viewer-card">
         <div class="viewer-header">
           <div class="viewer-title">
-            <div class="viewer-icon">🎮</div>
+            <div class="viewer-icon"><i data-lucide="smartphone"></i></div>
             <div>
               <div class="viewer-name">RailSense RCU</div>
               <div class="viewer-desc">Remote Control Unit — Handheld controller with OLED display</div>
@@ -591,25 +622,25 @@
     <div class="arch-diagram">
       <div class="arch-flow">
         <div class="arch-node cyan">
-          <div class="node-icon">🎮</div>
+          <div class="node-icon"><i data-lucide="smartphone"></i></div>
           <div class="node-name">RCU (TX)</div>
           <div class="node-sub">Remote Controller</div>
         </div>
         <div class="arch-arrow">⟶</div>
         <div class="arch-node">
-          <div class="node-icon">📡</div>
+          <div class="node-icon"><i data-lucide="radio"></i></div>
           <div class="node-name">ESP-NOW</div>
           <div class="node-sub">P2P • &lt;5ms • 100m+</div>
         </div>
         <div class="arch-arrow">⟶</div>
         <div class="arch-node cyan">
-          <div class="node-icon">🚂</div>
+          <div class="node-icon"><i data-lucide="cpu"></i></div>
           <div class="node-name">VCU (RX)</div>
           <div class="node-sub">Vehicle Controller</div>
         </div>
         <div class="arch-arrow">⟶</div>
         <div class="arch-node">
-          <div class="node-icon">⚙️</div>
+          <div class="node-icon"><i data-lucide="settings"></i></div>
           <div class="node-name">Actuators</div>
           <div class="node-sub">Motors • Pump • Vitme</div>
         </div>
@@ -626,37 +657,37 @@
 
     <div class="specs-grid">
       <div class="spec-card">
-        <div class="icon">⚡</div>
+        <div class="icon"><i data-lucide="zap"></i></div>
         <h3>Power Management</h3>
         <p>24V Li-ion 6S3P battery. 1oz copper traces, 6.5mm power rails. Peak 11A with ΔT &lt; 10°C. Calculated via Saturn PCB Toolkit.</p>
         <span class="tech-tag">IPC-2221</span>
       </div>
       <div class="spec-card">
-        <div class="icon">🛡️</div>
+        <div class="icon"><i data-lucide="shield"></i></div>
         <h3>Signal Integrity</h3>
         <p>Full ground plane on bottom layer. Via stitching around board edges. Complete isolation between power (motor) and signal (I2C/Encoder) zones.</p>
         <span class="tech-tag">EMI/EMC</span>
       </div>
       <div class="spec-card">
-        <div class="icon">🔲</div>
+        <div class="icon"><i data-lucide="activity"></i></div>
         <h3>Motor Control</h3>
         <p>4× BTS7960B H-Bridge drivers. PCA9685 PWM expansion via I2C. Closed-loop PID speed control with hall encoders.</p>
         <span class="tech-tag">BTS7960B × 4</span>
       </div>
       <div class="spec-card">
-        <div class="icon">📡</div>
+        <div class="icon"><i data-lucide="wifi"></i></div>
         <h3>Wireless Control</h3>
         <p>ESP-NOW peer-to-peer on 802.11 PHY layer. No TCP/IP overhead. Delivery callback confirmation. Packet loss &lt; 1%.</p>
         <span class="tech-tag">ESP-NOW P2P</span>
       </div>
       <div class="spec-card">
-        <div class="icon">🔊</div>
+        <div class="icon"><i data-lucide="waves"></i></div>
         <h3>NDT Ultrasonic</h3>
         <p>YUSHI 4MHz/20mm dual probes. Auto gel priming via 24VDC diaphragm pump. Self-locking lead screw probe deployment.</p>
         <span class="tech-tag">4MHz UT</span>
       </div>
       <div class="spec-card">
-        <div class="icon">📷</div>
+        <div class="icon"><i data-lucide="camera"></i></div>
         <h3>Computer Vision</h3>
         <p>Dual front-facing cameras for continuous rail surface imaging. Laptop-based AI processing with anti-vibration mount.</p>
         <span class="tech-tag">OpenCV</span>
@@ -674,5 +705,8 @@
     </p>
   </footer>
 
+  <script>
+    lucide.createIcons();
+  </script>
 </body>
 </html>
