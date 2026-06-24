@@ -1,6 +1,6 @@
 # RailSense – Autonomous Rail Inspection System (PCB & Firmware)
 
-[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live%20Demo-brightgreen?style=for-the-badge&logo=github)](https://YOUR_GITHUB_USERNAME.github.io/RailSense-PCB/)
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live%20Demo-brightgreen?style=for-the-badge&logo=github)](https://VuTheHuyHDES.github.io/RailSense-PCB/)
 [![Altium 365](https://img.shields.io/badge/Altium%20365-Interactive%203D-blue?style=for-the-badge&logo=altium)](https://365.altium.com/)
 [![ESP32](https://img.shields.io/badge/Hardware-ESP32-cyan?style=for-the-badge&logo=espressif)](https://www.espressif.com/)
 
@@ -39,7 +39,7 @@ Dự án nghiên cứu, thiết kế phần cứng và lập trình nhúng cho *
 
 Bạn có thể xem trực tiếp PCB dạng 3D xoay/lật và Schematic tại trang **GitHub Pages** của dự án hoặc qua link Altium 365 dưới đây:
 
-*   🌐 **Trang Portfolio GitHub Pages**: [https://YOUR_GITHUB_USERNAME.github.io/RailSense-PCB/](https://YOUR_GITHUB_USERNAME.github.io/RailSense-PCB/)
+*   🌐 **Trang Portfolio GitHub Pages**: [https://VuTheHuyHDES.github.io/RailSense-PCB/](https://VuTheHuyHDES.github.io/RailSense-PCB/)
 *   🚂 **Mạch VCU (Xe tự hành)**: [Altium 365 Viewer - RailSense VCU](https://365.altium.com/files/D97F3CD4-1BBE-41F5-9CD4-5D6C0D82514E?variant=[No+Variations])
 *   🎮 **Mạch RCU (Tay điều khiển)**: [Altium 365 Viewer - RailSense RCU](https://365.altium.com/files/4F8EC39F-F583-4526-B163-FFBB24310D29)
 
@@ -67,7 +67,7 @@ Nếu bạn muốn chạy thử trang web showcase local trên máy của mình:
 
 1.  Clone thư mục này về máy:
     ```bash
-    git clone https://github.com/YOUR_GITHUB_USERNAME/RailSense-PCB.git
+    git clone https://github.com/VuTheHuyHDES/RailSense-PCB.git
     ```
 2.  Mở file `docs/index.html` bằng trình duyệt web bất kỳ.
 
